@@ -27,11 +27,11 @@ def synFlood(tgt, dPort):
 # domain = "www.baidu.com"  # 定义你想攻击的域名，不建议是百度哈，别怪我没提醒
 # tgt = socket.gethostbyname(domain)  # 利用socket的方法获取域名的ip地址，即dns解析
 
-domain = "www.feewee.cn"  #
-tgt = socket.gethostbyname(domain)  # 利
+# domain = "www.feewee.cn"  #
+# tgt = socket.gethostbyname(domain)  # 利
 
 # 腾讯云服务器
-# tgt ="132.232.57.62"
+tgt ="132.232.57.62"
 
 
 print(tgt)  # 可以打印出来看一下
