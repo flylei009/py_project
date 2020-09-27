@@ -27,4 +27,5 @@ for row in object_dict:
     print(row)  # 格式如下：{'姓名': '陈海峰-霏微科技', '考勤组': '未加入考勤组', '部门': '‘xxx’}
 
 
-
+def print_welcome(name):
+    print("Welcome", name)
