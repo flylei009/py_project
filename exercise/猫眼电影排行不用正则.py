@@ -29,7 +29,7 @@ def main(offset):
     # print(soup.text)
     print(soup.find_all('dd'))
 
-    for link in soup.find_all('a'):
+    # for link in soup.find_all('a'):
 
 
 #     print(link.get('href'))
