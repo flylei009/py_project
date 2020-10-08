@@ -11,10 +11,10 @@
 
 # # print("通过文件名获取           ------------")
 
-from pyquery import PyQuery as pq
-doc = pq(filename='movie.html')
-print(doc('li'))
-print(type(doc('li')))
+# from pyquery import PyQuery as pq
+# doc = pq(filename='movie.html')
+# print(doc('li'))
+# print(type(doc('li')))
 
 # # print("基本 CSS 选择器           ------------")
 
@@ -278,6 +278,11 @@ print(type(doc('li')))
 # print(li)
 
 # # print(" text html attr操作 改变节点内部的内容         ------------")
+
+from pathlib import Path
+
+print(Path(__file__).name)
+
 html = '''
 <ul class="list">
      <li class="item-0 active"><a href="link3.html"><span class="bold">third item</span></a></li>
