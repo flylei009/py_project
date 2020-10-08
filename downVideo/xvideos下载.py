@@ -1,22 +1,38 @@
 import requests,re,os
 from pyquery import PyQuery as pq
 import json
+# from urlparse import urlparse
+import tldextract
+
 
 def get_page(page):
-    # params = {
-    #     'page': page
-    # }
     url = 'https://www.xvideos.com/new/' + str(page)
-    # print(url)
-    # doc = pq(requests.get(url, headers=headers).text)
+    headers = {
+        'Connection': 'Keep-Alive',
+        'Host': 'www.xvideos.com',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
+        'referer': url
+    }
+    print(headers)
 
+
+    print(url)
+    s = requests.session()
+    s.keep_alive = False
+
+    requests.adapters.DEFAULT_RETRIES = 5  # 增加重连次数
+    s = requests.session()
+    s.keep_alive = False  # 关闭多余连接
+    getcontent = s.get(url, headers=headers)
+
+    doc = pq(getcontent.text)
     allUrlList = []
-    with open('xvideos1.html', 'r', encoding='UTF-8') as f:  # 打开新的文本
-        text_new = f.read()  # 读取文本数据
-        doc = pq(text_new)
-        f.close()
-        linkList = doc('a').items()
-        photoList = doc('.thumb-block .thumb-inside .thumb a img ')   #视频中的图片宣传
+    # with open('xvideos1.html', 'r', encoding='UTF-8') as f:  # 打开新的文本
+    #     text_new = f.read()  # 读取文本数据
+    #     doc = pq(text_new)
+    #     f.close()
+    linkList = doc('a').items()
+    photoList = doc('.thumb-block .thumb-inside .thumb a img ')   #视频中的图片宣传
 
 # 1.1收集需要视频的url
     for link in linkList:
@@ -43,15 +59,22 @@ def get_page(page):
     for photo in photoList.items():
         id +=1
         photoUrl = photo.attr('data-src')
-        print(photo.attr('data-src'))
-        r = requests.get(photoUrl, headers=headers, stream=True)
+        print(photoUrl)
+        # parts = urlparse(url)
+        # host = parts.netloc
+        val = tldextract.extract(photoUrl)
+        print(val.subdomain, val.domain, val.suffix, val.registered_domain)
+
+        if val.subdomain == 'img-hw':
+            r = requests.get(photoUrl, headers=headers_hwcdn, stream=True)
+        elif  val.subdomain == 'img-l3':
+            r = requests.get(photoUrl, headers=headers_l3cdn, stream=True)
         if r.status_code == 200:
-            tempImagename = os.path.join(fileName, id + '.jpg')
+            tempImagename = os.path.join(fileName, str(id) + '.jpg')
             # print(tempImagename)
             open(tempImagename, 'wb').write(r.content)  # 将内容写入图片
             # print("done")
-        del r
-
+        # del r
 
 def main(offset):
     # 经查  https://smtmm.win/article/52700/    52700 这个参数修改即可。   52700~ 52799
@@ -59,13 +82,21 @@ def main(offset):
         get_page(i)
         print(i,"已经下载完毕！")
 
-headers = {
-    # 'cookie': cookies,
-    'Connection': 'close',
-    'Host': 'www.xvideos.com',
-    # 'Connection': 'keep-alive',
+
+
+
+headers_hwcdn = {
+    'Connection': 'Keep-Alive',
+    'Host': 'img-hw.xvideos-cdn.com',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
-    'referer': 'https://www.xvideos.com/new/1'
+    'referer': 'https://img-hw.xvideos-cdn.com/'
+}
+
+headers_l3cdn = {
+    'Connection': 'Keep-Alive',
+    'Host': 'img-l3.xvideos-cdn.com',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36',
+    'referer': 'https://img-l3.xvideos-cdn.com/'
 }
 
 domain = 'https://www.xvideos.com'
