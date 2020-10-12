@@ -63,7 +63,7 @@ def index_page(page):
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.m-itemlist .items .item')))
         get_products()
     except TimeoutException:
-        # index_page(page)
+        index_page(page)
 
 
 def get_products():
