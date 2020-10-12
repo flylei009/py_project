@@ -6,6 +6,7 @@ import json
 # 品牌清单
 brandList = []
 seriesList = []
+specList = []
 
 
 # 获取所有品牌
@@ -48,25 +49,67 @@ def getAllSeries():
 
                 seriesHtmlList = sdoc('div.search-result-list div.search-result-list-item')
                 for ser in seriesHtmlList.items():
-                    print(ser.attr('data-id'),ser('a p.cx-name').text())
+                    print(ser.attr('data-id'), ser('a p.cx-name').text())
                     seriesDic = {
                         'brandId': brand['brandId'],  # brandID
                         'seriesId': ser.attr('data-id'),  # 车系ID
+                        'seriesDetail': domain + ser('a').attr('href'),  # 车系详情页面
                         'seriesName': ser('a p.cx-name').text(),  # 车系名
                         'seriesImg': ser('a img').attr('src'),  # 车系图片
                         'seriesPrice': ser('a p.cx-price').text(),  # 车系价格区间
                     }
                     seriesList.append(seriesDic)
+    open('seriesList.txt', 'w').write(json.dumps(seriesList))  #保存车系到seriesList
+    print("seriesList： ", len(seriesList), seriesList)
 
-    print("resultList： ", len(seriesList), seriesList)
 
+# 获取所有车型
+def getAllSpec():
+    # tempseriesList = seriesList  #正式的时候用
+    # 暂时从文本读取
+    file = open('seriesList.txt', 'r', encoding='utf-8')
+    tempseriesList = json.loads(file.read())
+
+    for series in tempseriesList:
+        if series['brandId'] == '136':
+            print(series)
+            specHtml = series['seriesDetail']
+
+            specRs = requests.get(specHtml, headers=headers).text
+            specdoc = pq(specRs)
+
+            seriesHtmlList = specdoc('div.power-name tr.list-info')
+            for ser in seriesHtmlList.items():
+                # print(ser)
+                specDic = {
+                    'brandId': series['brandId'],  # brandID
+                    'seriesId': series['seriesId'],  #车系
+                    'specId': ser.attr('data-id'), # 车型
+
+                    'specUrl': domain + ser('td.first a').attr('href'), #车型网址
+                    'specName': ser('td.first a').text(), #车型名
+
+                    'specImg': ser('td.third a.car-item-pic').attr('href'), #车型图片
+                    'specParam': ser('td.third a.car-item-param').attr('href'), #车型参数
+                    'specPrice': ser('td.fouth span').text(), #指导价
+                    'specAcPrice': ser('td.five').text() #本地报价
+
+                }
+                specList.append(specDic)
+                # print(specList)
+    open('specList.txt', 'w').write(json.dumps(specList))  #保存车系到seriesList
+    print("specList： ", len(specList), specList)
 
 def main(offset):
     # 获取所有的品牌信息
     # getAllBrand()
 
     # 获取车系信息
-    getAllSeries()
+    # getAllSeries()
+
+    # 获取车型信息
+    getAllSpec()
+
 
 headers = {
     'cookie': 'locatecity=510100; bitauto_ipregion=125.71.54.190%3a%e5%9b%9b%e5%b7%9d%e7%9c%81%e6%88%90%e9%83%bd%e5%b8%82%3b2501%2c%e6%88%90%e9%83%bd%e5%b8%82%2cchengdu; UserGuid=571d72b6-6ca9-4bee-a18e-8a6186542d4f; auto_id=ff5fcb92338a47dba2761f99e1ed625e; XCWEBLOG_testcookie=yes; CIGDCID=97328f262b5d4cfa93eebc90fe89ee96; G_CIGDCID=97328f262b5d4cfa93eebc90fe89ee96; selectcity=510100; selectcityid=2501; selectcityName=%E6%88%90%E9%83%BD; Hm_lvt_03efd23dfd835817ac8b9504cf0e715d=1602381656; Hm_lpvt_03efd23dfd835817ac8b9504cf0e715d=1602381896; report-cookie-id=207830170_1602381914562',
