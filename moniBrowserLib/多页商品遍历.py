@@ -1,3 +1,11 @@
+from selenium import webdriver
+import time
+
+browser = webdriver.Chrome()
+browser.get('https://search.jd.com/Search?keyword=ipad')
+
+
+
 import pymongo
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -31,7 +39,7 @@ wait = WebDriverWait(browser, 30)   #等待一定的时间加载
 '''建议设置时长30s以上'''
 # client = pymongo.MongoClient(MONGO_URL)
 # db = client[MONGO_DB]
-
+KEYWORD = 'ipad'
 
 def index_page(page):
     """
@@ -42,20 +50,20 @@ def index_page(page):
     try:
         url = 'https://s.taobao.com/search?q=' + quote(KEYWORD)
         browser.get(url)
-        # if page > 1:
-        #     input = wait.until(
-        #         EC.presence_of_element_located((By.CSS_SELECTOR, '#mainsrp-pager div.form > input')))
-        #     submit = wait.until(
-        #         EC.element_to_be_clickable((By.CSS_SELECTOR, '#mainsrp-pager div.form > span.btn.J_Submit')))
-        #     input.clear()
-        #     input.send_keys(page)
-        #     submit.click()
-        # wait.until(
-        #     EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#mainsrp-pager li.item.active > span'), str(page)))
-        # wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.m-itemlist .items .item')))
+        if page > 1:
+            input = wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '#mainsrp-pager div.form > input')))
+            submit = wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, '#mainsrp-pager div.form > span.btn.J_Submit')))
+            input.clear()
+            input.send_keys(page)
+            submit.click()
+        wait.until(
+            EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#mainsrp-pager li.item.active > span'), str(page)))
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.m-itemlist .items .item')))
         get_products()
     except TimeoutException:
-        index_page(page)
+        # index_page(page)
 
 
 def get_products():
@@ -93,11 +101,9 @@ def get_products():
 def main():
     """
     遍历每一页
-    """
-    # for i in range(1, MAX_PAGE + 1):
-    #     index_page(i)
-    index_page(1)
-    browser.close()
+    # """
+    for i in range(1, MAX_PAGE + 1):
+        index_page(i)
 
 
 if __name__ == '__main__':
