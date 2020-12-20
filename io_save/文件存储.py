@@ -37,6 +37,7 @@ data = json.loads(str)
 print(data)
 print(type(data))
 print(data[0])
+print(type(data[0]))
 print(data[0].get('name'))
 # 请千万注意 JSON 字符串的表示需要用双引号，否则 loads 方法会解析失败
 

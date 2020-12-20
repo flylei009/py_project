@@ -17,7 +17,7 @@ using_sys.py
 """
 
 print('from … import 语句  ：  要导入模块 fibo 的 fib 函数 ---------------------------------------------------------------------------------')
-from  mysql_test.mysqltest2 import print_welcome    # from modname import *
+from  database_test.mysqltest2 import print_welcome    # from modname import *
 print_welcome(500)
 
 from  mypackage1.mypackage2.test import *    # from modname import *
